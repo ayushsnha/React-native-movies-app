@@ -1,11 +1,11 @@
 import React from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native';
+
+import { Home } from './Screens';
 
 const App = () => (
-    <SafeAreaView>
-        <View>
-            <Text>Hello</Text>
-        </View>
+    <SafeAreaView style={{ flex: 1 }}>
+        <Home />
     </SafeAreaView>
 );
 

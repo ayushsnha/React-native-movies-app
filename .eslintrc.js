@@ -38,6 +38,7 @@ module.exports = {
         'react/jsx-indent-props': [2, 4],
         'no-use-before-define': 0,
         'import/no-unresolved': [2, { ignore: ['@env'] }],
+        'no-restricted-exports': ['error', { restrictedNamedExports: ['default'] }],
         'import/extensions': [
             'error',
             'ignorePackages',
