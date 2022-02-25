@@ -2,14 +2,12 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const useAxios = ({ method, url, data = null }) => {
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const axiosRequest = async () => {
-        setError(false);
         setIsLoading(true);
-        setResponse(null);
         try {
             const apiResponse = await axios({
                 method,
@@ -17,18 +15,18 @@ const useAxios = ({ method, url, data = null }) => {
                 data,
             });
             setResponse(apiResponse.data.results);
+            setError(null);
         } catch (err) {
             setError(err);
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
+
     useEffect(() => {
         axiosRequest();
-
-    //   return () => {
-    //     second
-    //   }
     }, [method, url, data]);
+
     return { response, error, isLoading };
 };
 
