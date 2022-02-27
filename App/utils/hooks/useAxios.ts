@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 
-const useAxios = ({ method, url, data = null }) => {
+const useAxios = ({ method, url, data = null }:AxiosRequestConfig) => {
     const [response, setResponse] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +16,7 @@ const useAxios = ({ method, url, data = null }) => {
             });
             setResponse(apiResponse.data.results);
             setError(null);
-        } catch (err) {
+        } catch (err:any) {
             setError(err);
         } finally {
             setIsLoading(false);

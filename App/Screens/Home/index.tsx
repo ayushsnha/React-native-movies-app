@@ -19,7 +19,6 @@ const Home = () => {
     });
 
     useEffect(() => {
-        // console.log(response);
         if (response) {
             setMovieData(response.map((d:any) => `https://image.tmdb.org/t/p/w500/${d.poster_path}`));
         } else {
