@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Text } from 'react-native';
 import { TMDB_API_URI, TMDB_API_KEY } from '@env';
-import { SliderBox } from 'react-native-image-slider-box';
+// import { SliderBox } from 'react-native-image-slider-box';
 
 import { useAxios } from '../../utils';
 
-const dimensions = Dimensions.get('screen');
+import { Carousel } from '../../Components';
 
 const ErrorUI = () => <Text>Some Error</Text>;
 
@@ -20,7 +20,7 @@ const Home = () => {
 
     useEffect(() => {
         if (response) {
-            setMovieData(response.map((d:any) => `https://image.tmdb.org/t/p/w500/${d.poster_path}`));
+            setMovieData(response);
         } else {
             setError(error);
         }
@@ -29,14 +29,9 @@ const Home = () => {
         <View>
             {gerror ? ErrorUI()
                 : (
-                    <SliderBox
-                        images={movieData}
-                        autoPlay
-                        circleLoop
-                        dotStyle={{ height: 0 }}
-                        sliderBoxHeight={dimensions.height / 1.5}
-                    />
+                    <Carousel data={movieData} />
                 )}
+
         </View>
     );
 };
