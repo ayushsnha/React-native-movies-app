@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {
-    View, Image, StyleSheet, Dimensions,
+    View, FlatList, Image, StyleSheet, Dimensions,
 } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 interface CarouselProps {
     data: Array<any>;
@@ -19,49 +18,19 @@ const ImageComponent = ({ uri }: any) => (
     />
 );
 
-const Carousel = ({ data }:CarouselProps) => {
-    const [images, setImages] = useState<Array<String>>([]);
-    const [count, setCount] = useState(0);
+const renderItem = ({ item }:any) => (<ImageComponent uri={item.poster_path} />);
+const Carousel = ({ data }:CarouselProps) => (
+    <View>
+        <FlatList
+            data={data}
+            horizontal
+            renderItem={renderItem}
+            keyExtractor={(item):any => item.id}
+            pagingEnabled
+        />
+    </View>
 
-    const calculateCount = (direction:String) => {
-        const { length } = images;
-        if (direction === 'left') {
-            if (count === 0) {
-                setCount(length - 1);
-            } else {
-                setCount((prev:number) => (prev - 1));
-            }
-        } else if (direction === 'right') {
-            if (count === length - 1) {
-                setCount(0);
-            } else {
-                setCount((prev:number) => (prev + 1));
-            }
-        }
-    };
-
-    useEffect(() => {
-        const imageUrls:Array<String> = data.map((d) => d.poster_path);
-        setImages(imageUrls);
-    }, [data]);
-
-    // useEffect(() => {
-
-    // }, [count]);
-    console.log(count);
-    return (
-        <View>
-            <Swipeable
-                renderLeftActions={() => (<ImageComponent uri={images[count - 1]} />)}
-                renderRightActions={() => (<ImageComponent uri={images[count + 1]} />)}
-                onSwipeableWillOpen={(direction) => (calculateCount(direction))}
-            >
-                <ImageComponent uri={images[count]} />
-            </Swipeable>
-        </View>
-
-    );
-};
+);
 
 const styles = StyleSheet.create({
     logo: {
