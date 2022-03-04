@@ -7,9 +7,13 @@ interface CarouselProps {
     data: Array<any>;
 }
 
+interface ImageProps {
+    uri: string;
+}
+
 const { width, height } = Dimensions.get('window');
 
-const ImageComponent = ({ uri }: any) => (
+const ImageComponent = ({ uri }: ImageProps) => (
     <Image
         style={styles.logo}
         source={{
@@ -20,36 +24,45 @@ const ImageComponent = ({ uri }: any) => (
 
 const renderItem = ({ item }:any) => (<ImageComponent uri={item.poster_path} />);
 
-const infiniteScroll = (data:any, listRef:any) => {
+const infiniteScroll = (data:any, listRef: React.RefObject<FlatList>) => {
     const dataLength = data.length;
-    let scrollValue = 0; let scrolled = 0;
-    // console.log(scrollValue, dataLength);
-    setInterval(() => {
-        scrolled += 1;
-        if (scrolled < dataLength) {
-            scrollValue += width;
-        } else {
-            scrollValue = 0;
-            scrolled = 0;
-        }
-        if (listRef) {
-            listRef.current.scrollToOffset({
-                animated: true,
-                offset: scrollValue,
-            });
-        }
-    }, 2000);
+    let scrollValue = 0; let scrolled = 0; let
+        eventId = null;
+    if (listRef && dataLength > 0) {
+        eventId = setInterval(() => {
+            scrolled += 1;
+            if (scrolled < dataLength) {
+                scrollValue += width;
+            } else {
+                scrollValue = 0;
+                scrolled = 0;
+            }
+            if (listRef.current) {
+                listRef.current.scrollToOffset({
+                    animated: true,
+                    offset: scrollValue,
+                });
+            }
+        }, 4000);
+    }
+    return eventId;
 };
 
 const Carousel = ({ data }:CarouselProps) => {
     const [dataList, setDataList] = useState(data);
-    const listRef = useRef();
-    const scrollX = new Animated.Value(0);
+    const listRef = useRef<FlatList>(null);
+    const scrollX = useState(new Animated.Value(0))[0];
 
     useEffect(() => {
         setDataList(data);
-        infiniteScroll(dataList, listRef);
-    }, []);
+    }, [data]);
+
+    useEffect(() => {
+        const eventId:any = infiniteScroll(dataList, listRef);
+        return (() => {
+            clearInterval(eventId);
+        });
+    }, [dataList]);
 
     const position = Animated.divide(scrollX, width);
     return (
@@ -85,9 +98,9 @@ const Carousel = ({ data }:CarouselProps) => {
                         });
                         return (
                             <Animated.View
-                                key={i}
+                                key={_.id}
                                 style={{
-                                    opacity, height: 10, width: 10, backgroundColor: '#595959', margin: 8, borderRadius: 5,
+                                    opacity, height: 10, width: 10, backgroundColor: '#595959', margin: 4, borderRadius: 5,
                                 }}
                             />
                         );
