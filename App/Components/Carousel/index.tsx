@@ -24,15 +24,15 @@ const ImageComponent = ({ uri }: ImageProps) => (
 
 const renderItem = ({ item }:any) => (<ImageComponent uri={item.poster_path} />);
 
-const infiniteScroll = (data:any, listRef: React.RefObject<FlatList>) => {
+const infiniteScroll = (data:any, listRef: React.RefObject<FlatList>, currentScrolled:number) => {
     const dataLength = data.length;
-    let scrollValue = 0; let scrolled = 0; let
+    let scrollValue = 0; let scrolled = currentScrolled; let
         eventId = null;
     if (listRef && dataLength > 0) {
         eventId = setInterval(() => {
             scrolled += 1;
             if (scrolled < dataLength) {
-                scrollValue += width;
+                scrollValue = scrolled * width;
             } else {
                 scrollValue = 0;
                 scrolled = 0;
@@ -50,24 +50,29 @@ const infiniteScroll = (data:any, listRef: React.RefObject<FlatList>) => {
 
 const Carousel = ({ data }:CarouselProps) => {
     const [dataList, setDataList] = useState(data);
+    const [currentScrolled, setCurrentScrolled] = useState(0);
     const listRef = useRef<FlatList>(null);
     const scrollX = useState(new Animated.Value(0))[0];
+
+    const getScrollPosition = (e:any) => {
+        setCurrentScrolled(e.nativeEvent.contentOffset.x / width);
+    };
 
     useEffect(() => {
         setDataList(data);
     }, [data]);
 
     useEffect(() => {
-        const eventId:any = infiniteScroll(dataList, listRef);
+        const eventId:any = infiniteScroll(dataList, listRef, currentScrolled);
         return (() => {
             clearInterval(eventId);
         });
-    }, [dataList]);
+    }, [dataList, currentScrolled]);
 
     const position = Animated.divide(scrollX, width);
     return (
         <View>
-            <FlatList
+            <Animated.FlatList
                 data={data}
                 horizontal
                 ref={listRef}
@@ -84,9 +89,10 @@ const Carousel = ({ data }:CarouselProps) => {
                         },
                     }],
                     {
-                        useNativeDriver: false, // check
+                        useNativeDriver: true,
                     },
                 )}
+                onMomentumScrollEnd={(e) => getScrollPosition(e)}
             />
             <View style={styles.dotView}>
                 {
