@@ -1,28 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-    View, FlatList, Image, StyleSheet, Dimensions, Animated,
+    View, FlatList, StyleSheet, Dimensions, Animated,
 } from 'react-native';
+
+import Image from '../Image';
 
 interface CarouselProps {
     data: Array<any>;
 }
 
-interface ImageProps {
-    uri: string;
-}
-
 const { width, height } = Dimensions.get('window');
 
-const ImageComponent = ({ uri }: ImageProps) => (
-    <Image
-        style={styles.logo}
-        source={{
-            uri: `https://image.tmdb.org/t/p/w500${uri}`,
-        }}
-    />
-);
-
-const renderItem = ({ item }:any) => (<ImageComponent uri={item.poster_path} />);
+const renderItem = ({ item }:any) => (<Image styles={styles.logo} uri={item.poster_path} />);
 
 const infiniteScroll = (data:any, listRef: React.RefObject<FlatList>, currentScrolled:number) => {
     const dataLength = data.length;
